@@ -23,7 +23,7 @@ static void	affichage(int **tab)
   printf("\n");
 }
 
-static void	make_tab(int ***tab, int **data)
+static int	make_tab(int ***tab, int **data)
 {
   int		i;
   int		j;
@@ -48,6 +48,7 @@ static void	make_tab(int ***tab, int **data)
       (*tab)[k][1] = nb;
       ++k;
     }
+  return (k);
 }
 
 static void	free_tab(int ***tab)
@@ -59,10 +60,11 @@ static void	free_tab(int ***tab)
   free(*tab);
 }
 
-static void	parse(int ***tab, int **data, char **av)
+static int	parse(int ***tab, int **data, char **av)
 {
   int		i;
   int		nb;
+  int		classe;
 
   *data = (int *)malloc(sizeof(int) * 9);
   *tab = (int **)malloc(sizeof(int *) * 9);
@@ -71,23 +73,23 @@ static void	parse(int ***tab, int **data, char **av)
 
   for (i = 1 ; i < 10 ; i++)
     (*data)[i - 1] = atoi(av[i]);
-  make_tab(tab, data);
+  classe = make_tab(tab, data);
 }
 
 int	main(int argc, char **argv)
 {
   int	*data;
   int	**tab;
+  int	classe;
 
   if (argc != 10)
     {
       printf("Utilisation : %s [a] [b] [c] [d] [e] [f] [g] [h] [i]\n", argv[0]);
       return (EXIT_FAILURE);
     }
-  parse(&tab, &data, argv);
-  //menu(data);
+  classe = parse(&tab, &data, argv);
   affichage(tab);
-  appliquer_loi(tab, data);
+  appliquer_loi(tab, data, classe);
   free(data);
   free_tab(&tab);
   return (EXIT_SUCCESS);

@@ -39,18 +39,43 @@ static void     afficher_tableau(int **tab, double *loi)
   printf("\n");
 }
 
-static void	afficher_recap(int **tab, double *loi, double nb)
+static void	get_validity()
 {
+  char		*line;
+
+  for (i = 0; i < validity i++)
+    line = get_next_line(fd);
+  
+}
+
+static void	afficher_recap(int **tab, double *loi, double nb, int classe)
+{
+  int		pourcent[] = {99, 90, 80, 70, 60, 50, 40, 30,
+			      20, 10, 5, 2, 1};
+  double	values[] = {0.55, 1.61, 2.34, 3.00, 3.66, 4.35, 5.13, 
+			    6.06, 7.29, 9.24, 11.07, 11.67, 13.28};
   double	total;
   int		i;
 
   printf("\nloi choisie :\t\t\tB(100, %.4f)\n", (float)nb / 10000);
   total = 0;
-  for (i = 0 ; i < 7 ; i++)
-    total += pow(tab[i][1] - loi[i], 2) / loi[i]; 
+  for (i = 0 ; i < classe ; i++)
+    {
+      total += pow(tab[i][1] - loi[i], 2) / loi[i];
+      printf("%f %d %f\n", total, tab[i][1], loi[i]);
+    }
   printf("somme des carrés des écarts :\tX² = %.3f\n", total);
-  printf("degrés de liberté :\t\tv = 5\n");
+  printf("degrés de liberté :\t\tv = %d\n", classe - 2);
   printf("validité de l'ajustement :\t");
+  for (i = 0 ; i < 13 ; i++)
+    {
+      if (values[i] > total)
+	{
+	  printf("%d%% < P < %d%%\n", pourcent[i], pourcent[i - 1]);
+	  return ;
+	}
+    }
+  printf("P < 1%%\n");
 }
 
 static void	loi_binomiale(double **loi, double *coef, int *data)
@@ -84,7 +109,7 @@ static void	loi_binomiale(double **loi, double *coef, int *data)
     }
 }
 
-static void	coef_binomiale(int **tab, int *data)
+static void	coef_binomiale(int **tab, int *data, int classe)
 {
   double	*coef;
   double	*loi;
@@ -112,12 +137,12 @@ static void	coef_binomiale(int **tab, int *data)
     }
   loi_binomiale(&loi, coef, data);
   afficher_tableau(tab, loi);
-  afficher_recap(tab, loi, nb);
+  afficher_recap(tab, loi, nb, classe);
   free(loi);
   free(coef);
 }
 
-void		appliquer_loi(int **tab, int *data)
+void		appliquer_loi(int **tab, int *data, int classe)
 {
-  coef_binomiale(tab, data);
+  coef_binomiale(tab, data, classe);
 }
